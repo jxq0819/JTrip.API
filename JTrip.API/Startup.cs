@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JTrip.API.Services;
 
 namespace JTrip.API
 {
@@ -17,6 +18,7 @@ namespace JTrip.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddTransient<ITouristRouteRepository, MockTouristRouteRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
