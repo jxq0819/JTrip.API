@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using JTrip.API.Dtos;
 using JTrip.API.Services;
 
@@ -13,10 +14,12 @@ namespace JTrip.API.Controllers
     public class TouristRoutesController : ControllerBase
     {
         private ITouristRouteRepository _touristRouteRepository;
+        private readonly IMapper _mapper;
 
-        public TouristRoutesController(ITouristRouteRepository touristRouteRepository)
+        public TouristRoutesController(ITouristRouteRepository touristRouteRepository, IMapper mapper)
         {
             _touristRouteRepository = touristRouteRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,7 +31,8 @@ namespace JTrip.API.Controllers
                 return NotFound("No tourist routes");
             }
 
-            return Ok(touristRoutesFromRepo);
+            var touristRoutesDto = _mapper.Map<IEnumerable<TouristRouteDto>>(touristRoutesFromRepo);
+            return Ok(touristRoutesDto);
         }
 
         [HttpGet("{touristRouteId}")]
@@ -40,22 +44,7 @@ namespace JTrip.API.Controllers
                 return NotFound($"Tourist route {touristRouteId} not found");
             }
 
-            var touristRouteDto = new TouristRouteDto()
-            {
-                Id = touristRouteFromRepo.Id,
-                Title = touristRouteFromRepo.Title,
-                Description = touristRouteFromRepo.Description,
-                Price = touristRouteFromRepo.OriginalPrice * (decimal) (touristRouteFromRepo.DiscountPercent ?? 1),
-                CreateTime = touristRouteFromRepo.CreateTime,
-                UpdateTime = touristRouteFromRepo.UpdateTime,
-                Features = touristRouteFromRepo.Features,
-                Fees = touristRouteFromRepo.Fees,
-                Notes = touristRouteFromRepo.Notes,
-                Rating = touristRouteFromRepo.Rating,
-                TravelDays = touristRouteFromRepo.TravelDays.ToString(),
-                TripType = touristRouteFromRepo.TripType.ToString(),
-                DepartureCity = touristRouteFromRepo.DepartureCity.ToString()
-            };
+            var touristRouteDto = _mapper.Map<TouristRouteDto>(touristRouteFromRepo);
             return Ok(touristRouteDto);
         }
     }
