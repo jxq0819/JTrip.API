@@ -27,7 +27,8 @@ namespace JTrip.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(options => { options.ReturnHttpNotAcceptable = true; });
+            services.AddControllers(options => { options.ReturnHttpNotAcceptable = true; })
+                .AddXmlDataContractSerializerFormatters();
             services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
             services.AddDbContext<AppDbContext>(optionsAction =>
             {
