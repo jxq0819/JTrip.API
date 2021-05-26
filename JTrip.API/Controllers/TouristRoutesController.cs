@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JTrip.API.Dtos;
 using JTrip.API.Services;
 
 namespace JTrip.API.Controllers
@@ -39,7 +40,23 @@ namespace JTrip.API.Controllers
                 return NotFound($"Tourist route {touristRouteId} not found");
             }
 
-            return Ok(touristRouteFromRepo);
+            var touristRouteDto = new TouristRouteDto()
+            {
+                Id = touristRouteFromRepo.Id,
+                Title = touristRouteFromRepo.Title,
+                Description = touristRouteFromRepo.Description,
+                Price = touristRouteFromRepo.OriginalPrice * (decimal) (touristRouteFromRepo.DiscountPercent ?? 1),
+                CreateTime = touristRouteFromRepo.CreateTime,
+                UpdateTime = touristRouteFromRepo.UpdateTime,
+                Features = touristRouteFromRepo.Features,
+                Fees = touristRouteFromRepo.Fees,
+                Notes = touristRouteFromRepo.Notes,
+                Rating = touristRouteFromRepo.Rating,
+                TravelDays = touristRouteFromRepo.TravelDays.ToString(),
+                TripType = touristRouteFromRepo.TripType.ToString(),
+                DepartureCity = touristRouteFromRepo.DepartureCity.ToString()
+            };
+            return Ok(touristRouteDto);
         }
     }
 }
