@@ -29,5 +29,17 @@ namespace JTrip.API.Controllers
 
             return Ok(touristRoutesFromRepo);
         }
+
+        [HttpGet("{touristRouteId}")]
+        public IActionResult GetTouristRouteById(Guid touristRouteId)
+        {
+            var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
+            if (touristRouteFromRepo == null)
+            {
+                return NotFound($"Tourist route {touristRouteId} not found");
+            }
+
+            return Ok(touristRouteFromRepo);
+        }
     }
 }
