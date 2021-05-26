@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using JTrip.API.Models;
 
 namespace JTrip.API.Database
@@ -18,14 +21,21 @@ namespace JTrip.API.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TouristRoute>().HasData(new TouristRoute()
-            {
-                Id = Guid.NewGuid(),
-                Title = "TestTitle",
-                Description = "TestDescription",
-                OriginalPrice = 0,
-                CreateTime = DateTime.UtcNow
-            });
+            var touristRouteJsonData =
+                File.ReadAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
+                                 @"/Database/touristRoutesMockData.json");
+            IList<TouristRoute> touristRoutes =
+                JsonConvert.DeserializeObject<IList<TouristRoute>>(touristRouteJsonData);
+            modelBuilder.Entity<TouristRoute>().HasData(touristRoutes);
+
+            var touristRoutePictureJsonData =
+                File.ReadAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
+                                 @"/Database/touristRoutePicturesMockData.json");
+            IList<TouristRoutePicture> touristRoutePictures =
+                JsonConvert.DeserializeObject<IList<TouristRoutePicture>>(touristRoutePictureJsonData);
+            modelBuilder.Entity<TouristRoutePicture>().HasData(touristRoutePictures);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
