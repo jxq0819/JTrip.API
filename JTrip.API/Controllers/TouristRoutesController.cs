@@ -18,10 +18,16 @@ namespace JTrip.API.Controllers
             _touristRouteRepository = touristRouteRepository;
         }
 
+        [HttpGet]
         public IActionResult GetTouristRoutes()
         {
-            var routes = _touristRouteRepository.GetTouristRoutes();
-            return Ok(routes);
+            var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutes();
+            if (touristRoutesFromRepo == null || touristRoutesFromRepo.Count() <= 0)
+            {
+                return NotFound("No tourist routes");
+            }
+
+            return Ok(touristRoutesFromRepo);
         }
     }
 }
