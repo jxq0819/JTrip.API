@@ -23,6 +23,7 @@ namespace JTrip.API.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         public IActionResult GetTouristRoutes()
         {
             var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutes();
@@ -36,6 +37,7 @@ namespace JTrip.API.Controllers
         }
 
         [HttpGet("{touristRouteId}")]
+        [HttpHead("{touristRouteId}")]
         public IActionResult GetTouristRouteById(Guid touristRouteId)
         {
             var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
