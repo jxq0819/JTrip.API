@@ -25,5 +25,20 @@ namespace JTrip.API.Services
         {
             return _context.TouristRoutes;
         }
+
+        public bool TouristRouteExists(Guid touristRouteId)
+        {
+            return _context.TouristRoutes.Any(t => t.Id == touristRouteId);
+        }
+
+        public IEnumerable<TouristRoutePicture> GetPicturesByTouristRouteId(Guid touristRouteId)
+        {
+            return _context.TouristRoutePictures.Where(p => p.TouristRouteId == touristRouteId).ToList();
+        }
+
+        public TouristRoutePicture GetPicture(int pictureId)
+        {
+            return _context.TouristRoutePictures.Where(p => p.Id == pictureId).FirstOrDefault();
+        }
     }
 }
