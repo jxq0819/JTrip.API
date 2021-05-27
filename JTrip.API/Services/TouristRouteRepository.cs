@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using JTrip.API.Database;
 using JTrip.API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace JTrip.API.Services
 {
@@ -18,12 +19,13 @@ namespace JTrip.API.Services
 
         public TouristRoute GetTouristRoute(Guid touristRouteId)
         {
-            return _context.TouristRoutes.FirstOrDefault(n => n.Id == touristRouteId);
+            return _context.TouristRoutes.Include(t => t.TouristRoutePictures)
+                .FirstOrDefault(n => n.Id == touristRouteId);
         }
 
         public IEnumerable<TouristRoute> GetTouristRoutes()
         {
-            return _context.TouristRoutes;
+            return _context.TouristRoutes.Include(t => t.TouristRoutePictures);
         }
 
         public bool TouristRouteExists(Guid touristRouteId)
