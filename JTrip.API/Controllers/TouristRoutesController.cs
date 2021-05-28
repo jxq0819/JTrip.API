@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using JTrip.API.Dtos;
@@ -24,9 +25,19 @@ namespace JTrip.API.Controllers
 
         [HttpGet]
         [HttpHead]
-        public IActionResult GetTouristRoutes([FromQuery] string keyword)
+        public IActionResult GetTouristRoutes([FromQuery] string keyword, string rating)
         {
-            var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutes(keyword);
+            var regex = new Regex(@"([A-Za-z0-9\-]+)(\d+)");
+            var operatorType = "";
+            var ratingValue = -1;
+            var match = regex.Match(rating);
+            if (match.Success)
+            {
+                operatorType = match.Groups[1].Value;
+                ratingValue = Int32.Parse(match.Groups[2].Value);
+            }
+
+            var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutes(keyword, operatorType, ratingValue);
             if (touristRoutesFromRepo == null || touristRoutesFromRepo.Count() <= 0)
             {
                 return NotFound("No tourist routes");
