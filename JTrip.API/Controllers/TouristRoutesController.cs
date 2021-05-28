@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using JTrip.API.Dtos;
+using JTrip.API.ResourceParameters;
 using JTrip.API.Services;
 
 namespace JTrip.API.Controllers
@@ -25,19 +26,10 @@ namespace JTrip.API.Controllers
 
         [HttpGet]
         [HttpHead]
-        public IActionResult GetTouristRoutes([FromQuery] string keyword, string rating)
+        public IActionResult GetTouristRoutes([FromQuery] TouristRouteResourceParameters parameters)
         {
-            var regex = new Regex(@"([A-Za-z0-9\-]+)(\d+)");
-            var operatorType = "";
-            var ratingValue = -1;
-            var match = regex.Match(rating);
-            if (match.Success)
-            {
-                operatorType = match.Groups[1].Value;
-                ratingValue = Int32.Parse(match.Groups[2].Value);
-            }
-
-            var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutes(keyword, operatorType, ratingValue);
+            var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutes(parameters.Keyword,
+                parameters.RatingOperator, parameters.RatingValue);
             if (touristRoutesFromRepo == null || touristRoutesFromRepo.Count() <= 0)
             {
                 return NotFound("No tourist routes");
