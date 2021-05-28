@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using JTrip.API.Dtos;
+using JTrip.API.Models;
 using JTrip.API.ResourceParameters;
 using JTrip.API.Services;
 
@@ -39,7 +40,7 @@ namespace JTrip.API.Controllers
             return Ok(touristRoutesDto);
         }
 
-        [HttpGet("{touristRouteId}")]
+        [HttpGet("{touristRouteId}", Name = "GetTouristRouteById")]
         [HttpHead("{touristRouteId}")]
         public IActionResult GetTouristRouteById(Guid touristRouteId)
         {
@@ -51,6 +52,17 @@ namespace JTrip.API.Controllers
 
             var touristRouteDto = _mapper.Map<TouristRouteDto>(touristRouteFromRepo);
             return Ok(touristRouteDto);
+        }
+
+        [HttpPost]
+        public IActionResult CreateTouristRoute([FromBody] TouristRouteForCreationDto touristRouteForCreationDto)
+        {
+            var touristRouteModel = _mapper.Map<TouristRoute>(touristRouteForCreationDto);
+            _touristRouteRepository.AddTouristRoute(touristRouteModel);
+            _touristRouteRepository.Save();
+            var touristRouteToReturn = _mapper.Map<TouristRouteDto>(touristRouteModel);
+            return CreatedAtRoute("GetTouristRouteById", new {touristRouteId = touristRouteToReturn.Id},
+                touristRouteToReturn);
         }
     }
 }

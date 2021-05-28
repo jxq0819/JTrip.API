@@ -13,5 +13,7 @@ namespace JTrip.API.Services
         bool TouristRouteExists(Guid touristRouteId);
         IEnumerable<TouristRoutePicture> GetPicturesByTouristRouteId(Guid touristRouteId);
         TouristRoutePicture GetPicture(int pictureId);
+        void AddTouristRoute(TouristRoute touristRoute);
+        bool Save();
     }
 }
