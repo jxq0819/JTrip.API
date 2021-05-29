@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace JTrip.API.Dtos
 {
-    public class TouristRouteForCreationDto
+    public class TouristRouteForCreationDto : IValidatableObject
     {
+        [Required(ErrorMessage = "Title must not be null")]
+        [MaxLength(100)]
         public string Title { get; set; }
+        [Required]
+        [MaxLength(1500)]
         public string Description { get; set; }
         // Price is calculated as OriginalPrice * DiscountPercent
         public decimal Price { get; set; }
@@ -23,5 +28,13 @@ namespace JTrip.API.Dtos
         public string DepartureCity { get; set; }
         public ICollection<TouristRoutePictureForCreationDto> TouristRoutePictures { get; set; } =
             new List<TouristRoutePictureForCreationDto>();
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Title == Description)
+            {
+                yield return new ValidationResult("Title and description must be different",
+                    new[] {"TouristRouteForCreationDto"});
+            }
+        }
     }
 }
