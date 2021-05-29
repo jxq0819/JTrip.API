@@ -13,6 +13,7 @@ namespace JTrip.API.Profiles
         public TouristRoutePictureProfile()
         {
             CreateMap<TouristRoutePicture, TouristRoutePictureDto>();
+            CreateMap<TouristRoutePictureForCreationDto, TouristRoutePicture>();
         }
     }
 }

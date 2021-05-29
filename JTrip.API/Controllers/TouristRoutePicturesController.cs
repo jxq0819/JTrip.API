@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using JTrip.API.Dtos;
+using JTrip.API.Models;
 using JTrip.API.Services;
 
 namespace JTrip.API.Controllers
@@ -42,7 +43,7 @@ namespace JTrip.API.Controllers
             return Ok(touristRoutePicturesDto);
         }
 
-        [HttpGet("{pictureId}")]
+        [HttpGet("{pictureId}", Name = "GetPicture")]
         public IActionResult GetPicture(Guid touristRouteId, int pictureId)
         {
             if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
@@ -58,6 +59,23 @@ namespace JTrip.API.Controllers
 
             var touristRoutePictureDto = _mapper.Map<TouristRoutePictureDto>(touristPictureFromRepo);
             return Ok(touristRoutePictureDto);
+        }
+
+        [HttpPost]
+        public IActionResult CreateTouristRoutePicture([FromRoute] Guid touristRouteId,
+            [FromBody] TouristRoutePictureForCreationDto touristRoutePictureForCreationDto)
+        {
+            if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
+            {
+                return NotFound($"Tourist route {touristRouteId} not found");
+            }
+
+            var pictureModel = _mapper.Map<TouristRoutePicture>(touristRoutePictureForCreationDto);
+            _touristRouteRepository.AddTouristRoutePicture(touristRouteId, pictureModel);
+            _touristRouteRepository.Save();
+            var pictureToReturn = _mapper.Map<TouristRoutePictureDto>(pictureModel);
+            return CreatedAtRoute("GetPicture",
+                new {touristRouteId = pictureModel.TouristRouteId, pictureId = pictureModel.Id}, pictureToReturn);
         }
     }
 }

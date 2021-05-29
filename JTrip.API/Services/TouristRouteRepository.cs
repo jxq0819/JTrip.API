@@ -70,6 +70,22 @@ namespace JTrip.API.Services
             _context.TouristRoutes.Add(touristRoute);
         }
 
+        public void AddTouristRoutePicture(Guid touristRouteId, TouristRoutePicture touristRoutePicture)
+        {
+            if (touristRouteId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(touristRouteId));
+            }
+
+            if (touristRoutePicture == null)
+            {
+                throw new ArgumentNullException(nameof(touristRoutePicture));
+            }
+
+            touristRoutePicture.TouristRouteId = touristRouteId;
+            _context.TouristRoutePictures.Add(touristRoutePicture);
+        }
+
         public bool Save()
         {
             return _context.SaveChanges() >= 0;
