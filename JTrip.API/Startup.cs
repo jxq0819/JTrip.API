@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,23 @@ namespace JTrip.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers(options => { options.ReturnHttpNotAcceptable = true; })
-                .AddXmlDataContractSerializerFormatters();
+                .AddXmlDataContractSerializerFormatters()
+                .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context =>
+                {
+                    var problemDetail = new ValidationProblemDetails(context.ModelState)
+                    {
+                        Type = "https://tools.ietf.org/html/rfc4918#section-11.2",
+                        Title = "Validation errors occured",
+                        Status = StatusCodes.Status422UnprocessableEntity,
+                        Detail = "Please read error messages",
+                        Instance = context.HttpContext.Request.Path
+                    };
+                    problemDetail.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
+                    return new UnprocessableEntityObjectResult(problemDetail)
+                    {
+                        ContentTypes = {"application/problem+json"}
+                    };
+                });
             services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
             services.AddDbContext<AppDbContext>(optionsAction =>
             {
