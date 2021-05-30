@@ -13,7 +13,7 @@ namespace JTrip.API.Dtos
         [Required(ErrorMessage = "Title must not be null")]
         [MaxLength(100)]
         public string Title { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Description must not be null")]
         [MaxLength(1500)]
         public virtual string Description { get; set; }
         // Price is calculated as OriginalPrice * DiscountPercent
