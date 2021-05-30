@@ -64,5 +64,20 @@ namespace JTrip.API.Controllers
             return CreatedAtRoute("GetTouristRouteById", new {touristRouteId = touristRouteToReturn.Id},
                 touristRouteToReturn);
         }
+
+        [HttpPut("{touristRouteId}")]
+        public IActionResult UpdateTouristRoute([FromRoute] Guid touristRouteId,
+            [FromBody] TouristRouteForUpdateDto touristRouteForUpdateDto)
+        {
+            if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
+            {
+                return NotFound($"Tourist route {touristRouteId} not found");
+            }
+
+            var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
+            _mapper.Map(touristRouteForUpdateDto, touristRouteFromRepo);
+            _touristRouteRepository.Save();
+            return NoContent();
+        }
     }
 }
