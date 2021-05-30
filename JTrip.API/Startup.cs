@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using JTrip.API.Database;
 using JTrip.API.Services;
 
@@ -30,6 +31,10 @@ namespace JTrip.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers(options => { options.ReturnHttpNotAcceptable = true; })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                })
                 .AddXmlDataContractSerializerFormatters()
                 .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context =>
                 {

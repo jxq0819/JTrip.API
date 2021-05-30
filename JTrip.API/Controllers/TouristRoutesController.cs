@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +77,23 @@ namespace JTrip.API.Controllers
 
             var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
             _mapper.Map(touristRouteForUpdateDto, touristRouteFromRepo);
+            _touristRouteRepository.Save();
+            return NoContent();
+        }
+
+        [HttpPatch("{touristRouteId}")]
+        public IActionResult PartiallyUpdateTouristRoute([FromRoute] Guid touristRouteId,
+            [FromBody] JsonPatchDocument<TouristRouteForUpdateDto> patchDocument)
+        {
+            if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
+            {
+                return NotFound($"Tourist route {touristRouteId} not found");
+            }
+
+            var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
+            var touristRouteToPatch = _mapper.Map<TouristRouteForUpdateDto>(touristRouteFromRepo);
+            patchDocument.ApplyTo(touristRouteToPatch);
+            _mapper.Map(touristRouteToPatch, touristRouteFromRepo);
             _touristRouteRepository.Save();
             return NoContent();
         }
