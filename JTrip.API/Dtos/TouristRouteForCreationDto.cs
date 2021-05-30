@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using JTrip.API.ValidationAttributes;
 
 namespace JTrip.API.Dtos
 {
-    public class TouristRouteForCreationDto : IValidatableObject
+    [TouristRouteTitleMustBeDifferentFromDescription]
+    public class TouristRouteForCreationDto
     {
         [Required(ErrorMessage = "Title must not be null")]
         [MaxLength(100)]
@@ -28,13 +30,5 @@ namespace JTrip.API.Dtos
         public string DepartureCity { get; set; }
         public ICollection<TouristRoutePictureForCreationDto> TouristRoutePictures { get; set; } =
             new List<TouristRoutePictureForCreationDto>();
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (Title == Description)
-            {
-                yield return new ValidationResult("Title and description must be different",
-                    new[] {"TouristRouteForCreationDto"});
-            }
-        }
     }
 }
