@@ -115,5 +115,19 @@ namespace JTrip.API.Controllers
             _touristRouteRepository.Save();
             return NoContent();
         }
+
+        [HttpDelete("{touristRouteId}")]
+        public IActionResult DeleteTouristRoute([FromRoute] Guid touristRouteId)
+        {
+            if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
+            {
+                return NotFound($"Tourist route {touristRouteId} not found");
+            }
+
+            var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
+            _touristRouteRepository.DeleteTouristRoute(touristRouteFromRepo);
+            _touristRouteRepository.Save();
+            return NoContent();
+        }
     }
 }
