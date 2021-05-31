@@ -91,6 +91,11 @@ namespace JTrip.API.Services
             _context.TouristRoutes.Remove(touristRoute);
         }
 
+        public void DeleteTouristRoutePicture(TouristRoutePicture touristRoutePicture)
+        {
+            _context.TouristRoutePictures.Remove(touristRoutePicture);
+        }
+
         public bool Save()
         {
             return _context.SaveChanges() >= 0;

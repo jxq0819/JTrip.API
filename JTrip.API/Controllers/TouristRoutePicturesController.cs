@@ -77,5 +77,19 @@ namespace JTrip.API.Controllers
             return CreatedAtRoute("GetPicture",
                 new {touristRouteId = pictureModel.TouristRouteId, pictureId = pictureModel.Id}, pictureToReturn);
         }
+
+        [HttpDelete("{pictureID}")]
+        public IActionResult DeletePicture([FromRoute] Guid touristRouteId, [FromRoute] int pictureId)
+        {
+            if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
+            {
+                return NotFound($"Tourist route {touristRouteId} not found");
+            }
+
+            var picture = _touristRouteRepository.GetPicture(pictureId);
+            _touristRouteRepository.DeleteTouristRoutePicture(picture);
+            _touristRouteRepository.Save();
+            return NoContent();
+        }
     }
 }

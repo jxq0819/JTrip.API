@@ -16,6 +16,7 @@ namespace JTrip.API.Services
         void AddTouristRoute(TouristRoute touristRoute);
         void AddTouristRoutePicture(Guid touristRouteId, TouristRoutePicture touristRoutePicture);
         void DeleteTouristRoute(TouristRoute touristRoute);
+        void DeleteTouristRoutePicture(TouristRoutePicture touristRoutePicture);
         bool Save();
     }
 }
