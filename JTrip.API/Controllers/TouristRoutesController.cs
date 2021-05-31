@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -93,6 +94,23 @@ namespace JTrip.API.Controllers
             var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
             var touristRouteToPatch = _mapper.Map<TouristRouteForUpdateDto>(touristRouteFromRepo);
             patchDocument.ApplyTo(touristRouteToPatch);
+            if (!TryValidateModel(touristRouteToPatch))
+            {
+                var problemDetail = new ValidationProblemDetails(ModelState)
+                {
+                    Type = "https://tools.ietf.org/html/rfc4918#section-11.2",
+                    Title = "Validation errors occured",
+                    Status = StatusCodes.Status422UnprocessableEntity,
+                    Detail = "Please read error messages",
+                    Instance = HttpContext.Request.Path
+                };
+                problemDetail.Extensions.Add("traceId", HttpContext.TraceIdentifier);
+                return new UnprocessableEntityObjectResult(problemDetail)
+                {
+                    ContentTypes = {"application/problem+json"}
+                };
+            }
+
             _mapper.Map(touristRouteToPatch, touristRouteFromRepo);
             _touristRouteRepository.Save();
             return NoContent();
