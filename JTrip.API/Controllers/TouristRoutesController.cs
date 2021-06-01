@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using JTrip.API.Dtos;
+using JTrip.API.Helper;
 using JTrip.API.Models;
 using JTrip.API.ResourceParameters;
 using JTrip.API.Services;
@@ -126,6 +127,21 @@ namespace JTrip.API.Controllers
 
             var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
             _touristRouteRepository.DeleteTouristRoute(touristRouteFromRepo);
+            _touristRouteRepository.Save();
+            return NoContent();
+        }
+
+        [HttpDelete("({touristRouteIds})")]
+        public IActionResult DeleteTouristRoutesByIds([ModelBinder(BinderType = typeof(ArrayModelBinder))] [FromRoute]
+            IEnumerable<Guid> touristRouteIds)
+        {
+            if (touristRouteIds == null)
+            {
+                return BadRequest();
+            }
+
+            var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutesByIdList(touristRouteIds);
+            _touristRouteRepository.DeleteTouristRoutes(touristRoutesFromRepo);
             _touristRouteRepository.Save();
             return NoContent();
         }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using JTrip.API.Database;
 using JTrip.API.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace JTrip.API.Services
 {
@@ -21,6 +21,11 @@ namespace JTrip.API.Services
         {
             return _context.TouristRoutes.Include(t => t.TouristRoutePictures)
                 .FirstOrDefault(n => n.Id == touristRouteId);
+        }
+
+        public IEnumerable<TouristRoute> GetTouristRoutesByIdList(IEnumerable<Guid> ids)
+        {
+            return _context.TouristRoutes.Where(t => ids.Contains(t.Id)).ToList();
         }
 
         public IEnumerable<TouristRoute> GetTouristRoutes(string keyword, string ratingOperator, int? ratingValue)
@@ -89,6 +94,11 @@ namespace JTrip.API.Services
         public void DeleteTouristRoute(TouristRoute touristRoute)
         {
             _context.TouristRoutes.Remove(touristRoute);
+        }
+
+        public void DeleteTouristRoutes(IEnumerable<TouristRoute> touristRoutes)
+        {
+            _context.TouristRoutes.RemoveRange(touristRoutes);
         }
 
         public void DeleteTouristRoutePicture(TouristRoutePicture touristRoutePicture)
