@@ -30,9 +30,9 @@ namespace JTrip.API.Controllers
 
         [HttpGet]
         [HttpHead]
-        public IActionResult GetTouristRoutes([FromQuery] TouristRouteResourceParameters parameters)
+        public async Task<IActionResult> GetTouristRoutes([FromQuery] TouristRouteResourceParameters parameters)
         {
-            var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutes(parameters.Keyword,
+            var touristRoutesFromRepo = await _touristRouteRepository.GetTouristRoutesAsync(parameters.Keyword,
                 parameters.RatingOperator, parameters.RatingValue);
             if (touristRoutesFromRepo == null || touristRoutesFromRepo.Count() <= 0)
             {
@@ -45,9 +45,9 @@ namespace JTrip.API.Controllers
 
         [HttpGet("{touristRouteId}", Name = "GetTouristRouteById")]
         [HttpHead("{touristRouteId}")]
-        public IActionResult GetTouristRouteById(Guid touristRouteId)
+        public async Task<IActionResult> GetTouristRouteById(Guid touristRouteId)
         {
-            var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
+            var touristRouteFromRepo = await _touristRouteRepository.GetTouristRouteAsync(touristRouteId);
             if (touristRouteFromRepo == null)
             {
                 return NotFound($"Tourist route {touristRouteId} not found");
@@ -58,41 +58,42 @@ namespace JTrip.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTouristRoute([FromBody] TouristRouteForCreationDto touristRouteForCreationDto)
+        public async Task<IActionResult> CreateTouristRoute(
+            [FromBody] TouristRouteForCreationDto touristRouteForCreationDto)
         {
             var touristRouteModel = _mapper.Map<TouristRoute>(touristRouteForCreationDto);
             _touristRouteRepository.AddTouristRoute(touristRouteModel);
-            _touristRouteRepository.Save();
+            await _touristRouteRepository.SaveAsync();
             var touristRouteToReturn = _mapper.Map<TouristRouteDto>(touristRouteModel);
             return CreatedAtRoute("GetTouristRouteById", new {touristRouteId = touristRouteToReturn.Id},
                 touristRouteToReturn);
         }
 
         [HttpPut("{touristRouteId}")]
-        public IActionResult UpdateTouristRoute([FromRoute] Guid touristRouteId,
+        public async Task<IActionResult> UpdateTouristRoute([FromRoute] Guid touristRouteId,
             [FromBody] TouristRouteForUpdateDto touristRouteForUpdateDto)
         {
-            if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
+            if (!await _touristRouteRepository.TouristRouteExistsAsync(touristRouteId))
             {
                 return NotFound($"Tourist route {touristRouteId} not found");
             }
 
-            var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
+            var touristRouteFromRepo = await _touristRouteRepository.GetTouristRouteAsync(touristRouteId);
             _mapper.Map(touristRouteForUpdateDto, touristRouteFromRepo);
-            _touristRouteRepository.Save();
+            await _touristRouteRepository.SaveAsync();
             return NoContent();
         }
 
         [HttpPatch("{touristRouteId}")]
-        public IActionResult PartiallyUpdateTouristRoute([FromRoute] Guid touristRouteId,
+        public async Task<IActionResult> PartiallyUpdateTouristRoute([FromRoute] Guid touristRouteId,
             [FromBody] JsonPatchDocument<TouristRouteForUpdateDto> patchDocument)
         {
-            if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
+            if (!await _touristRouteRepository.TouristRouteExistsAsync(touristRouteId))
             {
                 return NotFound($"Tourist route {touristRouteId} not found");
             }
 
-            var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
+            var touristRouteFromRepo = await _touristRouteRepository.GetTouristRouteAsync(touristRouteId);
             var touristRouteToPatch = _mapper.Map<TouristRouteForUpdateDto>(touristRouteFromRepo);
             patchDocument.ApplyTo(touristRouteToPatch);
             if (!TryValidateModel(touristRouteToPatch))
@@ -113,26 +114,27 @@ namespace JTrip.API.Controllers
             }
 
             _mapper.Map(touristRouteToPatch, touristRouteFromRepo);
-            _touristRouteRepository.Save();
+            await _touristRouteRepository.SaveAsync();
             return NoContent();
         }
 
         [HttpDelete("{touristRouteId}")]
-        public IActionResult DeleteTouristRoute([FromRoute] Guid touristRouteId)
+        public async Task<IActionResult> DeleteTouristRoute([FromRoute] Guid touristRouteId)
         {
-            if (!_touristRouteRepository.TouristRouteExists(touristRouteId))
+            if (!await _touristRouteRepository.TouristRouteExistsAsync(touristRouteId))
             {
                 return NotFound($"Tourist route {touristRouteId} not found");
             }
 
-            var touristRouteFromRepo = _touristRouteRepository.GetTouristRoute(touristRouteId);
+            var touristRouteFromRepo = await _touristRouteRepository.GetTouristRouteAsync(touristRouteId);
             _touristRouteRepository.DeleteTouristRoute(touristRouteFromRepo);
-            _touristRouteRepository.Save();
+            await _touristRouteRepository.SaveAsync();
             return NoContent();
         }
 
         [HttpDelete("({touristRouteIds})")]
-        public IActionResult DeleteTouristRoutesByIds([ModelBinder(BinderType = typeof(ArrayModelBinder))] [FromRoute]
+        public async Task<IActionResult> DeleteTouristRoutesByIds(
+            [ModelBinder(BinderType = typeof(ArrayModelBinder))] [FromRoute]
             IEnumerable<Guid> touristRouteIds)
         {
             if (touristRouteIds == null)
@@ -140,9 +142,9 @@ namespace JTrip.API.Controllers
                 return BadRequest();
             }
 
-            var touristRoutesFromRepo = _touristRouteRepository.GetTouristRoutesByIdList(touristRouteIds);
+            var touristRoutesFromRepo = await _touristRouteRepository.GetTouristRoutesByIdListAsync(touristRouteIds);
             _touristRouteRepository.DeleteTouristRoutes(touristRoutesFromRepo);
-            _touristRouteRepository.Save();
+            await _touristRouteRepository.SaveAsync();
             return NoContent();
         }
     }

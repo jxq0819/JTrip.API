@@ -8,17 +8,17 @@ namespace JTrip.API.Services
 {
     public interface ITouristRouteRepository
     {
-        IEnumerable<TouristRoute> GetTouristRoutes(string keyword, string ratingOperator, int? ratingValue);
-        TouristRoute GetTouristRoute(Guid touristRouteId);
-        IEnumerable<TouristRoute> GetTouristRoutesByIdList(IEnumerable<Guid> ids);
-        bool TouristRouteExists(Guid touristRouteId);
-        IEnumerable<TouristRoutePicture> GetPicturesByTouristRouteId(Guid touristRouteId);
-        TouristRoutePicture GetPicture(int pictureId);
+        Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string keyword, string ratingOperator, int? ratingValue);
+        Task<TouristRoute> GetTouristRouteAsync(Guid touristRouteId);
+        Task<IEnumerable<TouristRoute>> GetTouristRoutesByIdListAsync(IEnumerable<Guid> ids);
+        Task<bool> TouristRouteExistsAsync(Guid touristRouteId);
+        Task<IEnumerable<TouristRoutePicture>> GetPicturesByTouristRouteIdAsync(Guid touristRouteId);
+        Task<TouristRoutePicture> GetPictureAsync(int pictureId);
         void AddTouristRoute(TouristRoute touristRoute);
         void AddTouristRoutePicture(Guid touristRouteId, TouristRoutePicture touristRoutePicture);
         void DeleteTouristRoute(TouristRoute touristRoute);
         void DeleteTouristRoutes(IEnumerable<TouristRoute> touristRoutes);
         void DeleteTouristRoutePicture(TouristRoutePicture touristRoutePicture);
-        bool Save();
+        Task<bool> SaveAsync();
     }
 }

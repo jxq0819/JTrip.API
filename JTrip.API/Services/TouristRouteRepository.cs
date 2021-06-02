@@ -17,18 +17,19 @@ namespace JTrip.API.Services
             _context = appDbContext;
         }
 
-        public TouristRoute GetTouristRoute(Guid touristRouteId)
+        public async Task<TouristRoute> GetTouristRouteAsync(Guid touristRouteId)
         {
-            return _context.TouristRoutes.Include(t => t.TouristRoutePictures)
-                .FirstOrDefault(n => n.Id == touristRouteId);
+            return await _context.TouristRoutes.Include(t => t.TouristRoutePictures)
+                .FirstOrDefaultAsync(n => n.Id == touristRouteId);
         }
 
-        public IEnumerable<TouristRoute> GetTouristRoutesByIdList(IEnumerable<Guid> ids)
+        public async Task<IEnumerable<TouristRoute>> GetTouristRoutesByIdListAsync(IEnumerable<Guid> ids)
         {
-            return _context.TouristRoutes.Where(t => ids.Contains(t.Id)).ToList();
+            return await _context.TouristRoutes.Where(t => ids.Contains(t.Id)).ToListAsync();
         }
 
-        public IEnumerable<TouristRoute> GetTouristRoutes(string keyword, string ratingOperator, int? ratingValue)
+        public async Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string keyword, string ratingOperator,
+            int? ratingValue)
         {
             IQueryable<TouristRoute> result = _context.TouristRoutes.Include(t => t.TouristRoutePictures);
             if (!string.IsNullOrWhiteSpace(keyword))
@@ -47,22 +48,22 @@ namespace JTrip.API.Services
                 };
             }
 
-            return result.ToList();
+            return await result.ToListAsync();
         }
 
-        public bool TouristRouteExists(Guid touristRouteId)
+        public async Task<bool> TouristRouteExistsAsync(Guid touristRouteId)
         {
-            return _context.TouristRoutes.Any(t => t.Id == touristRouteId);
+            return await _context.TouristRoutes.AnyAsync(t => t.Id == touristRouteId);
         }
 
-        public IEnumerable<TouristRoutePicture> GetPicturesByTouristRouteId(Guid touristRouteId)
+        public async Task<IEnumerable<TouristRoutePicture>> GetPicturesByTouristRouteIdAsync(Guid touristRouteId)
         {
-            return _context.TouristRoutePictures.Where(p => p.TouristRouteId == touristRouteId).ToList();
+            return await _context.TouristRoutePictures.Where(p => p.TouristRouteId == touristRouteId).ToListAsync();
         }
 
-        public TouristRoutePicture GetPicture(int pictureId)
+        public async Task<TouristRoutePicture> GetPictureAsync(int pictureId)
         {
-            return _context.TouristRoutePictures.Where(p => p.Id == pictureId).FirstOrDefault();
+            return await _context.TouristRoutePictures.Where(p => p.Id == pictureId).FirstOrDefaultAsync();
         }
 
         public void AddTouristRoute(TouristRoute touristRoute)
@@ -106,9 +107,9 @@ namespace JTrip.API.Services
             _context.TouristRoutePictures.Remove(touristRoutePicture);
         }
 
-        public bool Save()
+        public async Task<bool> SaveAsync()
         {
-            return _context.SaveChanges() >= 0;
+            return await _context.SaveChangesAsync() >= 0;
         }
     }
 }
