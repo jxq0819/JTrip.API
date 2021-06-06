@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -58,6 +59,7 @@ namespace JTrip.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateTouristRoute(
             [FromBody] TouristRouteForCreationDto touristRouteForCreationDto)
         {
@@ -70,6 +72,7 @@ namespace JTrip.API.Controllers
         }
 
         [HttpPut("{touristRouteId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTouristRoute([FromRoute] Guid touristRouteId,
             [FromBody] TouristRouteForUpdateDto touristRouteForUpdateDto)
         {
@@ -85,6 +88,7 @@ namespace JTrip.API.Controllers
         }
 
         [HttpPatch("{touristRouteId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PartiallyUpdateTouristRoute([FromRoute] Guid touristRouteId,
             [FromBody] JsonPatchDocument<TouristRouteForUpdateDto> patchDocument)
         {
@@ -119,6 +123,7 @@ namespace JTrip.API.Controllers
         }
 
         [HttpDelete("{touristRouteId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTouristRoute([FromRoute] Guid touristRouteId)
         {
             if (!await _touristRouteRepository.TouristRouteExistsAsync(touristRouteId))
@@ -133,6 +138,7 @@ namespace JTrip.API.Controllers
         }
 
         [HttpDelete("({touristRouteIds})")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTouristRoutesByIds(
             [ModelBinder(BinderType = typeof(ArrayModelBinder))] [FromRoute]
             IEnumerable<Guid> touristRouteIds)
