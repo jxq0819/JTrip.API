@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -19,10 +20,12 @@ namespace JTrip.API.Controllers
     public class AuthenticateController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public AuthenticateController(IConfiguration configuration)
+        public AuthenticateController(IConfiguration configuration, UserManager<IdentityUser> userManager)
         {
             _configuration = configuration;
+            _userManager = userManager;
         }
 
         [AllowAnonymous]
@@ -42,6 +45,24 @@ namespace JTrip.API.Controllers
                 expires: DateTime.UtcNow.AddDays(1), signingCredentials);
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             return Ok(tokenString);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        {
+            var user = new IdentityUser()
+            {
+                UserName = registerDto.Email,
+                Email = registerDto.Email
+            };
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+            if (!result.Succeeded)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
     }
 }
