@@ -21,22 +21,39 @@ namespace JTrip.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public AuthenticateController(IConfiguration configuration, UserManager<IdentityUser> userManager)
+        public AuthenticateController(IConfiguration configuration, UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager)
         {
             _configuration = configuration;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var signingAlgorithm = SecurityAlgorithms.HmacSha256;
-            var claims = new[]
+            var loginResult = await _signInManager.PasswordSignInAsync(loginDto.Email, loginDto.Password, false, false);
+            if (!loginResult.Succeeded)
             {
-                new Claim(JwtRegisteredClaimNames.Sub, "fake_user_id")
+                return BadRequest();
+            }
+
+            var user = await _userManager.FindByNameAsync(loginDto.Email);
+            var signingAlgorithm = SecurityAlgorithms.HmacSha256;
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id)
             };
+            var roleNames = await _userManager.GetRolesAsync(user);
+            foreach (var roleName in roleNames)
+            {
+                var roleClaim = new Claim(ClaimTypes.Role, roleName);
+                claims.Add(roleClaim);
+            }
+
             var secretByte = Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]);
             var signingKey = new SymmetricSecurityKey(secretByte);
             var signingCredentials = new SigningCredentials(signingKey, signingAlgorithm);
