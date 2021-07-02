@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using JTrip.API.Dtos;
+using JTrip.API.Models;
 
 namespace JTrip.API.Controllers
 {
@@ -20,11 +21,11 @@ namespace JTrip.API.Controllers
     public class AuthenticateController : Controller
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AuthenticateController(IConfiguration configuration, UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+        public AuthenticateController(IConfiguration configuration, UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _configuration = configuration;
             _userManager = userManager;
@@ -68,7 +69,7 @@ namespace JTrip.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            var user = new IdentityUser()
+            var user = new ApplicationUser
             {
                 UserName = registerDto.Email,
                 Email = registerDto.Email
