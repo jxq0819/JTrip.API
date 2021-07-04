@@ -19,6 +19,8 @@ namespace JTrip.API.Services
         void DeleteTouristRoute(TouristRoute touristRoute);
         void DeleteTouristRoutes(IEnumerable<TouristRoute> touristRoutes);
         void DeleteTouristRoutePicture(TouristRoutePicture touristRoutePicture);
+        Task<ShoppingCart> GetShoppingCartByUserIdAsync(string userId);
+        Task CreateShoppingCartAsync(ShoppingCart shoppingCart);
         Task<bool> SaveAsync();
     }
 }
