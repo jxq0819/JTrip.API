@@ -38,5 +38,32 @@ namespace JTrip.API.Controllers
             var shoppingCartDto = _mapper.Map<ShoppingCartDto>(shoppingCart);
             return Ok(shoppingCartDto);
         }
+
+        [HttpPost("items")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> AddShoppingCartItem([FromBody] AddShoppingCartItemDto addShoppingCartItemDto)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var shoppingCart = await _touristRouteRepository.GetShoppingCartByUserIdAsync(userId);
+            var touristRoute =
+                await _touristRouteRepository.GetTouristRouteAsync(addShoppingCartItemDto.TouristRouteId);
+            if (touristRoute == null)
+            {
+                return NotFound($"Tourist route {addShoppingCartItemDto.TouristRouteId} not found");
+            }
+
+            var lineItem = new LineItem
+            {
+                TouristRouteId = addShoppingCartItemDto.TouristRouteId,
+                ShoppingCartId = shoppingCart.Id,
+                OriginalPrice = touristRoute.OriginalPrice,
+                DiscountPercent = touristRoute.DiscountPercent
+            };
+
+            await _touristRouteRepository.AddShoppingCartItemAsync(lineItem);
+            await _touristRouteRepository.SaveAsync();
+            var shoppingCartDto = _mapper.Map<ShoppingCartDto>(shoppingCart);
+            return Ok(shoppingCartDto);
+        }
     }
 }

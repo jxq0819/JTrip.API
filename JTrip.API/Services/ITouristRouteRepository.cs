@@ -21,6 +21,7 @@ namespace JTrip.API.Services
         void DeleteTouristRoutePicture(TouristRoutePicture touristRoutePicture);
         Task<ShoppingCart> GetShoppingCartByUserIdAsync(string userId);
         Task CreateShoppingCartAsync(ShoppingCart shoppingCart);
+        Task AddShoppingCartItemAsync(LineItem lineItem);
         Task<bool> SaveAsync();
     }
 }
