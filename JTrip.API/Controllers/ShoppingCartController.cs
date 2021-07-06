@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,6 @@ using AutoMapper;
 using JTrip.API.Dtos;
 using JTrip.API.Models;
 using JTrip.API.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace JTrip.API.Controllers
 {
@@ -64,6 +64,21 @@ namespace JTrip.API.Controllers
             await _touristRouteRepository.SaveAsync();
             var shoppingCartDto = _mapper.Map<ShoppingCartDto>(shoppingCart);
             return Ok(shoppingCartDto);
+        }
+
+        [HttpDelete("items/{itemId}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> DeleteShoppingCartItem([FromRoute] int itemId)
+        {
+            var lineItem = await _touristRouteRepository.GetShoppingCartItemByItemIdAsync(itemId);
+            if (lineItem == null)
+            {
+                return NotFound($"Shopping cart item {itemId} not found");
+            }
+
+            _touristRouteRepository.DeleteShoppingCartItem(lineItem);
+            await _touristRouteRepository.SaveAsync();
+            return NoContent();
         }
     }
 }

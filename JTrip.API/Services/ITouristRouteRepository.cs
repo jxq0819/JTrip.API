@@ -22,6 +22,8 @@ namespace JTrip.API.Services
         Task<ShoppingCart> GetShoppingCartByUserIdAsync(string userId);
         Task CreateShoppingCartAsync(ShoppingCart shoppingCart);
         Task AddShoppingCartItemAsync(LineItem lineItem);
+        Task<LineItem> GetShoppingCartItemByItemIdAsync(int lineItemId);
+        void DeleteShoppingCartItem(LineItem lineItem);
         Task<bool> SaveAsync();
     }
 }
