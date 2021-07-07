@@ -137,6 +137,16 @@ namespace JTrip.API.Services
             _context.LineItems.Remove(lineItem);
         }
 
+        public async Task<IEnumerable<LineItem>> GetShoppingCartItemsByItemIdListAsync(IEnumerable<int> ids)
+        {
+            return await _context.LineItems.Where(li => ids.Contains(li.Id)).ToListAsync();
+        }
+
+        public void DeleteShoppingCartItems(IEnumerable<LineItem> lineItems)
+        {
+            _context.LineItems.RemoveRange(lineItems);
+        }
+
         public async Task<bool> SaveAsync()
         {
             return await _context.SaveChangesAsync() >= 0;

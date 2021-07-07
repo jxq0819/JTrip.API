@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using JTrip.API.Dtos;
+using JTrip.API.Helper;
 using JTrip.API.Models;
 using JTrip.API.Services;
 
@@ -77,6 +78,23 @@ namespace JTrip.API.Controllers
             }
 
             _touristRouteRepository.DeleteShoppingCartItem(lineItem);
+            await _touristRouteRepository.SaveAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("items/({itemIds})")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> DeleteShoppingCartItemsByIds(
+            [ModelBinder(BinderType = typeof(ArrayModelBinder))] [FromRoute]
+            IEnumerable<int> itemIds)
+        {
+            if (itemIds == null)
+            {
+                return BadRequest();
+            }
+
+            var items = await _touristRouteRepository.GetShoppingCartItemsByItemIdListAsync(itemIds);
+            _touristRouteRepository.DeleteShoppingCartItems(items);
             await _touristRouteRepository.SaveAsync();
             return NoContent();
         }
