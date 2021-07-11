@@ -16,6 +16,9 @@ namespace JTrip.API.Models
         public Guid TouristRouteId { get; set; }
         public TouristRoute TouristRoute { get; set; }
         public Guid? ShoppingCartId { get; set; }
+        public ShoppingCart ShoppingCart { get; set; }
+        public Guid? OrderId { get; set; }
+        public Order Order { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal OriginalPrice { get; set; }
         [Range(0.0, 1.0)]
