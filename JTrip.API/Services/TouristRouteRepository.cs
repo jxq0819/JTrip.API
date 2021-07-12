@@ -147,6 +147,11 @@ namespace JTrip.API.Services
             _context.LineItems.RemoveRange(lineItems);
         }
 
+        public async Task AddOrderAsync(Order order)
+        {
+            await _context.Orders.AddAsync(order);
+        }
+
         public async Task<bool> SaveAsync()
         {
             return await _context.SaveChangesAsync() >= 0;

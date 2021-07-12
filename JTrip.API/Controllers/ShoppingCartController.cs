@@ -98,5 +98,26 @@ namespace JTrip.API.Controllers
             await _touristRouteRepository.SaveAsync();
             return NoContent();
         }
+
+        [HttpPost("checkout")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> Checkout()
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var shoppingCart = await _touristRouteRepository.GetShoppingCartByUserIdAsync(userId);
+            var order = new Order
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                State = OrderStateEnum.Pending,
+                OrderItems = shoppingCart.ShoppingCartItems,
+                CreateDateUtc = DateTime.UtcNow
+            };
+            shoppingCart.ShoppingCartItems = null;
+            await _touristRouteRepository.AddOrderAsync(order);
+            await _touristRouteRepository.SaveAsync();
+            var orderDto = _mapper.Map<OrderDto>(order);
+            return Ok(orderDto);
+        }
     }
 }
