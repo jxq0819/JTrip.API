@@ -27,6 +27,7 @@ namespace JTrip.API.Services
         Task<IEnumerable<LineItem>> GetShoppingCartItemsByItemIdListAsync(IEnumerable<int> ids);
         void DeleteShoppingCartItems(IEnumerable<LineItem> lineItems);
         Task AddOrderAsync(Order order);
+        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId);
         Task<bool> SaveAsync();
     }
 }
