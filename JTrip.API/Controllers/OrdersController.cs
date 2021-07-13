@@ -37,5 +37,14 @@ namespace JTrip.API.Controllers
             var ordersDto = _mapper.Map<IEnumerable<OrderDto>>(orders);
             return Ok(ordersDto);
         }
+
+        [HttpGet("{orderId}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> GetOrderById([FromRoute] Guid orderId)
+        {
+            var order = await _touristRouteRepository.GetOrderByIdAsync(orderId);
+            var orderDto = _mapper.Map<OrderDto>(order);
+            return Ok(orderDto);
+        }
     }
 }
