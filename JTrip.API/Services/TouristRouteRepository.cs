@@ -17,19 +17,8 @@ namespace JTrip.API.Services
             _context = appDbContext;
         }
 
-        public async Task<TouristRoute> GetTouristRouteAsync(Guid touristRouteId)
-        {
-            return await _context.TouristRoutes.Include(t => t.TouristRoutePictures)
-                .FirstOrDefaultAsync(n => n.Id == touristRouteId);
-        }
-
-        public async Task<IEnumerable<TouristRoute>> GetTouristRoutesByIdListAsync(IEnumerable<Guid> ids)
-        {
-            return await _context.TouristRoutes.Where(t => ids.Contains(t.Id)).ToListAsync();
-        }
-
         public async Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string keyword, string ratingOperator,
-            int? ratingValue)
+            int? ratingValue, int pageSize, int pageNumber)
         {
             IQueryable<TouristRoute> result = _context.TouristRoutes.Include(t => t.TouristRoutePictures);
             if (!string.IsNullOrWhiteSpace(keyword))
@@ -48,7 +37,21 @@ namespace JTrip.API.Services
                 };
             }
 
+            var skip = (pageNumber - 1) * pageSize;
+            result = result.Skip(skip);
+            result = result.Take(pageSize);
             return await result.ToListAsync();
+        }
+
+        public async Task<TouristRoute> GetTouristRouteAsync(Guid touristRouteId)
+        {
+            return await _context.TouristRoutes.Include(t => t.TouristRoutePictures)
+                .FirstOrDefaultAsync(n => n.Id == touristRouteId);
+        }
+
+        public async Task<IEnumerable<TouristRoute>> GetTouristRoutesByIdListAsync(IEnumerable<Guid> ids)
+        {
+            return await _context.TouristRoutes.Where(t => ids.Contains(t.Id)).ToListAsync();
         }
 
         public async Task<bool> TouristRouteExistsAsync(Guid touristRouteId)

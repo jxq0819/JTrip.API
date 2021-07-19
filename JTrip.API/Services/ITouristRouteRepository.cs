@@ -8,7 +8,8 @@ namespace JTrip.API.Services
 {
     public interface ITouristRouteRepository
     {
-        Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string keyword, string ratingOperator, int? ratingValue);
+        Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string keyword, string ratingOperator, int? ratingValue,
+            int pageSize, int pageNumber);
         Task<TouristRoute> GetTouristRouteAsync(Guid touristRouteId);
         Task<IEnumerable<TouristRoute>> GetTouristRoutesByIdListAsync(IEnumerable<Guid> ids);
         Task<bool> TouristRouteExistsAsync(Guid touristRouteId);

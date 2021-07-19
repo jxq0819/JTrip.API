@@ -34,7 +34,7 @@ namespace JTrip.API.Controllers
         public async Task<IActionResult> GetTouristRoutes([FromQuery] TouristRouteResourceParameters parameters)
         {
             var touristRoutesFromRepo = await _touristRouteRepository.GetTouristRoutesAsync(parameters.Keyword,
-                parameters.RatingOperator, parameters.RatingValue);
+                parameters.RatingOperator, parameters.RatingValue, parameters.PageSize, parameters.PageNumber);
             if (touristRoutesFromRepo == null || touristRoutesFromRepo.Count() <= 0)
             {
                 return NotFound("No tourist routes");
