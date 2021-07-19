@@ -16,8 +16,8 @@ namespace JTrip.API.Services
         Task<bool> TouristRouteExistsAsync(Guid touristRouteId);
         Task<IEnumerable<TouristRoutePicture>> GetPicturesByTouristRouteIdAsync(Guid touristRouteId);
         Task<TouristRoutePicture> GetPictureAsync(int pictureId);
-        void AddTouristRoute(TouristRoute touristRoute);
-        void AddTouristRoutePicture(Guid touristRouteId, TouristRoutePicture touristRoutePicture);
+        Task AddTouristRouteAsync(TouristRoute touristRoute);
+        Task AddTouristRoutePictureAsync(Guid touristRouteId, TouristRoutePicture touristRoutePicture);
         void DeleteTouristRoute(TouristRoute touristRoute);
         void DeleteTouristRoutes(IEnumerable<TouristRoute> touristRoutes);
         void DeleteTouristRoutePicture(TouristRoutePicture touristRoutePicture);

@@ -71,7 +71,7 @@ namespace JTrip.API.Controllers
             [FromBody] TouristRouteForCreationDto touristRouteForCreationDto)
         {
             var touristRouteModel = _mapper.Map<TouristRoute>(touristRouteForCreationDto);
-            _touristRouteRepository.AddTouristRoute(touristRouteModel);
+            await _touristRouteRepository.AddTouristRouteAsync(touristRouteModel);
             await _touristRouteRepository.SaveAsync();
             var touristRouteToReturn = _mapper.Map<TouristRouteDto>(touristRouteModel);
             return CreatedAtRoute("GetTouristRouteById", new {touristRouteId = touristRouteToReturn.Id},

@@ -67,17 +67,17 @@ namespace JTrip.API.Services
             return await _context.TouristRoutePictures.Where(p => p.Id == pictureId).FirstOrDefaultAsync();
         }
 
-        public void AddTouristRoute(TouristRoute touristRoute)
+        public async Task AddTouristRouteAsync(TouristRoute touristRoute)
         {
             if (touristRoute == null)
             {
                 throw new ArgumentNullException(nameof(touristRoute));
             }
 
-            _context.TouristRoutes.Add(touristRoute);
+            await _context.TouristRoutes.AddAsync(touristRoute);
         }
 
-        public void AddTouristRoutePicture(Guid touristRouteId, TouristRoutePicture touristRoutePicture)
+        public async Task AddTouristRoutePictureAsync(Guid touristRouteId, TouristRoutePicture touristRoutePicture)
         {
             if (touristRouteId == Guid.Empty)
             {
@@ -90,7 +90,7 @@ namespace JTrip.API.Services
             }
 
             touristRoutePicture.TouristRouteId = touristRouteId;
-            _context.TouristRoutePictures.Add(touristRoutePicture);
+            await _context.TouristRoutePictures.AddAsync(touristRoutePicture);
         }
 
         public void DeleteTouristRoute(TouristRoute touristRoute)

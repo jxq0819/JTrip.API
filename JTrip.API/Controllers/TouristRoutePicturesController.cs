@@ -74,7 +74,7 @@ namespace JTrip.API.Controllers
             }
 
             var pictureModel = _mapper.Map<TouristRoutePicture>(touristRoutePictureForCreationDto);
-            _touristRouteRepository.AddTouristRoutePicture(touristRouteId, pictureModel);
+            await _touristRouteRepository.AddTouristRoutePictureAsync(touristRouteId, pictureModel);
             await _touristRouteRepository.SaveAsync();
             var pictureToReturn = _mapper.Map<TouristRoutePictureDto>(pictureModel);
             return CreatedAtRoute("GetPicture",
