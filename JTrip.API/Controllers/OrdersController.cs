@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using JTrip.API.Dtos;
+using JTrip.API.ResourceParameters;
 using JTrip.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -35,10 +36,12 @@ namespace JTrip.API.Controllers
 
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> GetOrders(
+            [FromQuery] PaginationResourceParameters paginationResourceParameters)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var orders = await _touristRouteRepository.GetOrdersByUserIdAsync(userId);
+            var orders = await _touristRouteRepository.GetOrdersByUserIdAsync(userId,
+                paginationResourceParameters.PageSize, paginationResourceParameters.PageNumber);
             var ordersDto = _mapper.Map<IEnumerable<OrderDto>>(orders);
             return Ok(ordersDto);
         }
