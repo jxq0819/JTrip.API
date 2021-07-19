@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using JTrip.API.Database;
+using JTrip.API.Helper;
 using JTrip.API.Models;
 
 namespace JTrip.API.Services
@@ -17,7 +18,7 @@ namespace JTrip.API.Services
             _context = appDbContext;
         }
 
-        public async Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string keyword, string ratingOperator,
+        public async Task<PaginationList<TouristRoute>> GetTouristRoutesAsync(string keyword, string ratingOperator,
             int? ratingValue, int pageSize, int pageNumber)
         {
             IQueryable<TouristRoute> result = _context.TouristRoutes.Include(t => t.TouristRoutePictures);
@@ -37,10 +38,7 @@ namespace JTrip.API.Services
                 };
             }
 
-            var skip = (pageNumber - 1) * pageSize;
-            result = result.Skip(skip);
-            result = result.Take(pageSize);
-            return await result.ToListAsync();
+            return await PaginationList<TouristRoute>.CreateAsync(pageNumber, pageSize, result);
         }
 
         public async Task<TouristRoute> GetTouristRouteAsync(Guid touristRouteId)

@@ -31,10 +31,16 @@ namespace JTrip.API.Controllers
 
         [HttpGet]
         [HttpHead]
-        public async Task<IActionResult> GetTouristRoutes([FromQuery] TouristRouteResourceParameters parameters)
+        public async Task<IActionResult> GetTouristRoutes(
+            [FromQuery] TouristRouteResourceParameters touristRouteResourceParameters,
+            [FromQuery] PaginationResourceParameters paginationResourceParameters)
         {
-            var touristRoutesFromRepo = await _touristRouteRepository.GetTouristRoutesAsync(parameters.Keyword,
-                parameters.RatingOperator, parameters.RatingValue, parameters.PageSize, parameters.PageNumber);
+            var touristRoutesFromRepo = await _touristRouteRepository.GetTouristRoutesAsync(
+                touristRouteResourceParameters.Keyword,
+                touristRouteResourceParameters.RatingOperator,
+                touristRouteResourceParameters.RatingValue,
+                paginationResourceParameters.PageSize,
+                paginationResourceParameters.PageNumber);
             if (touristRoutesFromRepo == null || touristRoutesFromRepo.Count() <= 0)
             {
                 return NotFound("No tourist routes");
