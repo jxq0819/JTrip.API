@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Newtonsoft.Json;
 
 namespace JTrip.API.Controllers
 {
@@ -36,7 +37,36 @@ namespace JTrip.API.Controllers
             _urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);
         }
 
-        [HttpGet]
+        private string GenerateTouristRouteResourceUrl(TouristRouteResourceParameters touristRouteResourceParameters,
+            PaginationResourceParameters paginationResourceParameters, ResourceUrlType resourceUrlType)
+        {
+            return resourceUrlType switch
+            {
+                ResourceUrlType.PreviousPage => _urlHelper.Link("GetTouristRoutes", new
+                {
+                    keyword = touristRouteResourceParameters.Keyword,
+                    rating = touristRouteResourceParameters.Rating,
+                    pageNumber = paginationResourceParameters.PageNumber - 1,
+                    pageSize = paginationResourceParameters.PageSize
+                }),
+                ResourceUrlType.NextPage => _urlHelper.Link("GetTouristRoutes", new
+                {
+                    keyword = touristRouteResourceParameters.Keyword,
+                    rating = touristRouteResourceParameters.Rating,
+                    pageNumber = paginationResourceParameters.PageNumber + 1,
+                    pageSize = paginationResourceParameters.PageSize
+                }),
+                _ => _urlHelper.Link("GetTouristRoutes", new
+                {
+                    keyword = touristRouteResourceParameters.Keyword,
+                    rating = touristRouteResourceParameters.Rating,
+                    pageNumber = paginationResourceParameters.PageNumber,
+                    pageSize = paginationResourceParameters.PageSize
+                })
+            };
+        }
+
+        [HttpGet(Name = "GetTouristRoutes")]
         [HttpHead]
         public async Task<IActionResult> GetTouristRoutes(
             [FromQuery] TouristRouteResourceParameters touristRouteResourceParameters,
@@ -54,6 +84,25 @@ namespace JTrip.API.Controllers
             }
 
             var touristRoutesDto = _mapper.Map<IEnumerable<TouristRouteDto>>(touristRoutesFromRepo);
+            var previousPageLink = touristRoutesFromRepo.HasPrevious
+                ? GenerateTouristRouteResourceUrl(touristRouteResourceParameters, paginationResourceParameters,
+                    ResourceUrlType.PreviousPage)
+                : null;
+            var nextPageLink = touristRoutesFromRepo.HasNext
+                ? GenerateTouristRouteResourceUrl(touristRouteResourceParameters, paginationResourceParameters,
+                    ResourceUrlType.NextPage)
+                : null;
+
+            var paginationMetadata = new
+            {
+                previousPageLink,
+                nextPageLink,
+                totalCount = touristRoutesFromRepo.TotalCount,
+                pageSize = touristRoutesFromRepo.PageSize,
+                currentPage = touristRoutesFromRepo.CurrentPage,
+                totalPages = touristRoutesFromRepo.TotalPages
+            };
+            Response.Headers.Add("x-pagination", JsonConvert.SerializeObject(paginationMetadata));
             return Ok(touristRoutesDto);
         }
 
