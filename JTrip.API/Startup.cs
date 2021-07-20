@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,7 @@ namespace JTrip.API
         {
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -48,6 +50,7 @@ namespace JTrip.API
                         ValidateLifetime = true, IssuerSigningKey = new SymmetricSecurityKey(secretByte)
                     };
                 });
+
             services.AddControllers(options => { options.ReturnHttpNotAcceptable = true; })
                 .AddNewtonsoftJson(options =>
                 {
@@ -70,13 +73,19 @@ namespace JTrip.API
                         ContentTypes = {"application/problem+json"}
                     };
                 });
+
             services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
+
             services.AddDbContext<AppDbContext>(optionsAction =>
             {
                 optionsAction.UseSqlServer(Configuration["DbContext:ConnectionString"]);
             });
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddHttpClient();
+
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
