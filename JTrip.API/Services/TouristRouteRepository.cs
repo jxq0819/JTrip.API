@@ -18,8 +18,13 @@ namespace JTrip.API.Services
             _context = appDbContext;
         }
 
-        public async Task<PaginationList<TouristRoute>> GetTouristRoutesAsync(string keyword, string ratingOperator,
-            int? ratingValue, int pageSize, int pageNumber)
+        public async Task<PaginationList<TouristRoute>> GetTouristRoutesAsync(
+            string orderBy,
+            string keyword,
+            string ratingOperator,
+            int? ratingValue,
+            int pageSize,
+            int pageNumber)
         {
             IQueryable<TouristRoute> result = _context.TouristRoutes.Include(t => t.TouristRoutePictures);
             if (!string.IsNullOrWhiteSpace(keyword))
@@ -36,6 +41,14 @@ namespace JTrip.API.Services
                     "lessThan" => result.Where(t => t.Rating <= ratingValue),
                     _ => result.Where(t => t.Rating == ratingValue)
                 };
+            }
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                if (orderBy.ToLowerInvariant() == "originalprice")
+                {
+                    result = result.OrderBy(t => t.OriginalPrice);
+                }
             }
 
             return await PaginationList<TouristRoute>.CreateAsync(pageNumber, pageSize, result);

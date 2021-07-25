@@ -73,6 +73,7 @@ namespace JTrip.API.Controllers
             [FromQuery] PaginationResourceParameters paginationResourceParameters)
         {
             var touristRoutesFromRepo = await _touristRouteRepository.GetTouristRoutesAsync(
+                touristRouteResourceParameters.OrderBy,
                 touristRouteResourceParameters.Keyword,
                 touristRouteResourceParameters.RatingOperator,
                 touristRouteResourceParameters.RatingValue,
