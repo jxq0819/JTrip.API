@@ -44,6 +44,7 @@ namespace JTrip.API.Controllers
             {
                 ResourceUrlType.PreviousPage => _urlHelper.Link("GetTouristRoutes", new
                 {
+                    orderBy = touristRouteResourceParameters.OrderBy,
                     keyword = touristRouteResourceParameters.Keyword,
                     rating = touristRouteResourceParameters.Rating,
                     pageNumber = paginationResourceParameters.PageNumber - 1,
@@ -51,6 +52,7 @@ namespace JTrip.API.Controllers
                 }),
                 ResourceUrlType.NextPage => _urlHelper.Link("GetTouristRoutes", new
                 {
+                    orderBy = touristRouteResourceParameters.OrderBy,
                     keyword = touristRouteResourceParameters.Keyword,
                     rating = touristRouteResourceParameters.Rating,
                     pageNumber = paginationResourceParameters.PageNumber + 1,
@@ -58,6 +60,7 @@ namespace JTrip.API.Controllers
                 }),
                 _ => _urlHelper.Link("GetTouristRoutes", new
                 {
+                    orderBy = touristRouteResourceParameters.OrderBy,
                     keyword = touristRouteResourceParameters.Keyword,
                     rating = touristRouteResourceParameters.Rating,
                     pageNumber = paginationResourceParameters.PageNumber,
