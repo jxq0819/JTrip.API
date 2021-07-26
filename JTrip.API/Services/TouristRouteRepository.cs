@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using JTrip.API.Database;
+using JTrip.API.Dtos;
 using JTrip.API.Helper;
 using JTrip.API.Models;
 
@@ -12,10 +13,12 @@ namespace JTrip.API.Services
     public class TouristRouteRepository : ITouristRouteRepository
     {
         private readonly AppDbContext _context;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public TouristRouteRepository(AppDbContext appDbContext)
+        public TouristRouteRepository(AppDbContext appDbContext, IPropertyMappingService propertyMappingService)
         {
             _context = appDbContext;
+            _propertyMappingService = propertyMappingService;
         }
 
         public async Task<PaginationList<TouristRoute>> GetTouristRoutesAsync(
@@ -45,10 +48,9 @@ namespace JTrip.API.Services
 
             if (!string.IsNullOrEmpty(orderBy))
             {
-                if (orderBy.ToLowerInvariant() == "originalprice")
-                {
-                    result = result.OrderBy(t => t.OriginalPrice);
-                }
+                var touristRouteMappingDictionary =
+                    _propertyMappingService.GetPropertyMapping<TouristRouteDto, TouristRoute>();
+                result = result.ApplySort(orderBy, touristRouteMappingDictionary);
             }
 
             return await PaginationList<TouristRoute>.CreateAsync(pageNumber, pageSize, result);
