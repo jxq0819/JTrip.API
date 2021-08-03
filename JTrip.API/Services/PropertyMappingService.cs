@@ -38,5 +38,29 @@ namespace JTrip.API.Services
             throw new Exception(
                 $"Cannot find exact property mapping instance for <{typeof(TSource)}, {typeof(TDestination)}>");
         }
+
+        public bool IsMappingExists<TSource, TDestination>(string fields)
+        {
+            var propertyMapping = GetPropertyMapping<TSource, TDestination>();
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                return true;
+            }
+
+            var fieldsAfterSplit = fields.Split(",");
+            foreach (var field in fieldsAfterSplit)
+            {
+                var trimmedField = field.Trim();
+                var indexOfFirstSpace = trimmedField.IndexOf(" ", StringComparison.Ordinal);
+                var propertyName = indexOfFirstSpace == -1 ? trimmedField : trimmedField.Remove(indexOfFirstSpace);
+
+                if (!propertyMapping.ContainsKey(propertyName))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

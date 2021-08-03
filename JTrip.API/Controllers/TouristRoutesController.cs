@@ -25,16 +25,19 @@ namespace JTrip.API.Controllers
         private readonly ITouristRouteRepository _touristRouteRepository;
         private readonly IMapper _mapper;
         private readonly IUrlHelper _urlHelper;
+        private readonly IPropertyMappingService _propertyMappingService;
 
         public TouristRoutesController(
             ITouristRouteRepository touristRouteRepository,
             IMapper mapper,
             IUrlHelperFactory urlHelperFactory,
-            IActionContextAccessor actionContextAccessor)
+            IActionContextAccessor actionContextAccessor,
+            IPropertyMappingService propertyMappingService)
         {
             _touristRouteRepository = touristRouteRepository;
             _mapper = mapper;
             _urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);
+            _propertyMappingService = propertyMappingService;
         }
 
         private string GenerateTouristRouteResourceUrl(TouristRouteResourceParameters touristRouteResourceParameters,
@@ -75,6 +78,12 @@ namespace JTrip.API.Controllers
             [FromQuery] TouristRouteResourceParameters touristRouteResourceParameters,
             [FromQuery] PaginationResourceParameters paginationResourceParameters)
         {
+            if (!_propertyMappingService.IsMappingExists<TouristRouteDto, TouristRoute>(touristRouteResourceParameters
+                .OrderBy))
+            {
+                return BadRequest("Order by parameters are inappropriate");
+            }
+
             var touristRoutesFromRepo = await _touristRouteRepository.GetTouristRoutesAsync(
                 touristRouteResourceParameters.OrderBy,
                 touristRouteResourceParameters.Keyword,
