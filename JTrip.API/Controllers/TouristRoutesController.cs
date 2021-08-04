@@ -124,7 +124,8 @@ namespace JTrip.API.Controllers
 
         [HttpGet("{touristRouteId}", Name = "GetTouristRouteById")]
         [HttpHead("{touristRouteId}")]
-        public async Task<IActionResult> GetTouristRouteById(Guid touristRouteId)
+        public async Task<IActionResult> GetTouristRouteById(Guid touristRouteId,
+            [FromQuery] TouristRouteResourceParameters touristRouteResourceParameters)
         {
             var touristRouteFromRepo = await _touristRouteRepository.GetTouristRouteAsync(touristRouteId);
             if (touristRouteFromRepo == null)
@@ -133,7 +134,7 @@ namespace JTrip.API.Controllers
             }
 
             var touristRouteDto = _mapper.Map<TouristRouteDto>(touristRouteFromRepo);
-            return Ok(touristRouteDto);
+            return Ok(touristRouteDto.ShapeData(touristRouteResourceParameters.Fields));
         }
 
         [HttpPost]
@@ -146,7 +147,7 @@ namespace JTrip.API.Controllers
             await _touristRouteRepository.AddTouristRouteAsync(touristRouteModel);
             await _touristRouteRepository.SaveAsync();
             var touristRouteToReturn = _mapper.Map<TouristRouteDto>(touristRouteModel);
-            return CreatedAtRoute("GetTouristRouteById", new {touristRouteId = touristRouteToReturn.Id},
+            return CreatedAtRoute("GetTouristRouteById", new { touristRouteId = touristRouteToReturn.Id },
                 touristRouteToReturn);
         }
 
@@ -194,7 +195,7 @@ namespace JTrip.API.Controllers
                 problemDetail.Extensions.Add("traceId", HttpContext.TraceIdentifier);
                 return new UnprocessableEntityObjectResult(problemDetail)
                 {
-                    ContentTypes = {"application/problem+json"}
+                    ContentTypes = { "application/problem+json" }
                 };
             }
 
