@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper.Configuration.Internal;
@@ -14,10 +15,10 @@ namespace JTrip.API.Services
         private readonly Dictionary<string, PropertyMappingValue> _touristRoutePropertyMapping =
             new Dictionary<string, PropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
             {
-                {"Id", new PropertyMappingValue(new List<string> {"Id"})},
-                {"Title", new PropertyMappingValue(new List<string> {"Title"})},
-                {"Rating", new PropertyMappingValue(new List<string> {"Rating"})},
-                {"OriginalPrice", new PropertyMappingValue(new List<string> {"OriginalPrice"})}
+                { "Id", new PropertyMappingValue(new List<string> { "Id" }) },
+                { "Title", new PropertyMappingValue(new List<string> { "Title" }) },
+                { "Rating", new PropertyMappingValue(new List<string> { "Rating" }) },
+                { "OriginalPrice", new PropertyMappingValue(new List<string> { "OriginalPrice" }) }
             };
 
         private readonly IList<IPropertyMapping> _propertyMappings = new List<IPropertyMapping>();
@@ -55,6 +56,28 @@ namespace JTrip.API.Services
                 var propertyName = indexOfFirstSpace == -1 ? trimmedField : trimmedField.Remove(indexOfFirstSpace);
 
                 if (!propertyMapping.ContainsKey(propertyName))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool IsPropertyExists<T>(string fields)
+        {
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                return true;
+            }
+
+            var fieldsAfterSplit = fields.Split(",");
+            foreach (var field in fieldsAfterSplit)
+            {
+                var propertyName = field.Trim();
+                var propertyInfo = typeof(T).GetProperty(propertyName,
+                    BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                if (propertyInfo == null)
                 {
                     return false;
                 }
