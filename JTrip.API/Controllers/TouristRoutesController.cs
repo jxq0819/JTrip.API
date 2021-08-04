@@ -50,6 +50,7 @@ namespace JTrip.API.Controllers
                     orderBy = touristRouteResourceParameters.OrderBy,
                     keyword = touristRouteResourceParameters.Keyword,
                     rating = touristRouteResourceParameters.Rating,
+                    fields = touristRouteResourceParameters.Fields,
                     pageNumber = paginationResourceParameters.PageNumber - 1,
                     pageSize = paginationResourceParameters.PageSize
                 }),
@@ -58,6 +59,7 @@ namespace JTrip.API.Controllers
                     orderBy = touristRouteResourceParameters.OrderBy,
                     keyword = touristRouteResourceParameters.Keyword,
                     rating = touristRouteResourceParameters.Rating,
+                    fields = touristRouteResourceParameters.Fields,
                     pageNumber = paginationResourceParameters.PageNumber + 1,
                     pageSize = paginationResourceParameters.PageSize
                 }),
@@ -66,6 +68,7 @@ namespace JTrip.API.Controllers
                     orderBy = touristRouteResourceParameters.OrderBy,
                     keyword = touristRouteResourceParameters.Keyword,
                     rating = touristRouteResourceParameters.Rating,
+                    fields = touristRouteResourceParameters.Fields,
                     pageNumber = paginationResourceParameters.PageNumber,
                     pageSize = paginationResourceParameters.PageSize
                 })
@@ -116,7 +119,7 @@ namespace JTrip.API.Controllers
                 totalPages = touristRoutesFromRepo.TotalPages
             };
             Response.Headers.Add("x-pagination", JsonConvert.SerializeObject(paginationMetadata));
-            return Ok(touristRoutesDto);
+            return Ok(touristRoutesDto.ShapeData(touristRouteResourceParameters.Fields));
         }
 
         [HttpGet("{touristRouteId}", Name = "GetTouristRouteById")]
