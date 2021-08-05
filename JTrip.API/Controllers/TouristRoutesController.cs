@@ -87,6 +87,11 @@ namespace JTrip.API.Controllers
                 return BadRequest("Order by parameters are inappropriate");
             }
 
+            if (!_propertyMappingService.IsPropertyExists<TouristRouteDto>(touristRouteResourceParameters.Fields))
+            {
+                return BadRequest("Field parameters are inappropriate");
+            }
+
             var touristRoutesFromRepo = await _touristRouteRepository.GetTouristRoutesAsync(
                 touristRouteResourceParameters.OrderBy,
                 touristRouteResourceParameters.Keyword,
