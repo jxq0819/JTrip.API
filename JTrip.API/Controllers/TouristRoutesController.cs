@@ -132,6 +132,11 @@ namespace JTrip.API.Controllers
         public async Task<IActionResult> GetTouristRouteById(Guid touristRouteId,
             [FromQuery] TouristRouteResourceParameters touristRouteResourceParameters)
         {
+            if (!_propertyMappingService.IsPropertyExists<TouristRouteDto>(touristRouteResourceParameters.Fields))
+            {
+                return BadRequest("Field parameters are inappropriate");
+            }
+
             var touristRouteFromRepo = await _touristRouteRepository.GetTouristRouteAsync(touristRouteId);
             if (touristRouteFromRepo == null)
             {
