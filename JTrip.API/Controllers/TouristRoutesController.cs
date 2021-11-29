@@ -147,7 +147,7 @@ namespace JTrip.API.Controllers
             return Ok(touristRouteDto.ShapeData(touristRouteResourceParameters.Fields));
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreateTouristRoute")]
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateTouristRoute(
@@ -161,7 +161,7 @@ namespace JTrip.API.Controllers
                 touristRouteToReturn);
         }
 
-        [HttpPut("{touristRouteId}")]
+        [HttpPut("{touristRouteId}", Name = "UpdateTouristRoute")]
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTouristRoute([FromRoute] Guid touristRouteId,
@@ -178,7 +178,7 @@ namespace JTrip.API.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{touristRouteId}")]
+        [HttpPatch("{touristRouteId}", Name = "PartiallyUpdateTouristRoute")]
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PartiallyUpdateTouristRoute([FromRoute] Guid touristRouteId,
@@ -214,7 +214,7 @@ namespace JTrip.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{touristRouteId}")]
+        [HttpDelete("{touristRouteId}", Name = "DeleteTouristRoute")]
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTouristRoute([FromRoute] Guid touristRouteId)

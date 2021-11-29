@@ -26,7 +26,7 @@ namespace JTrip.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetPictureListForTouristRoute")]
         public async Task<IActionResult> GetPictureListForTouristRoute(Guid touristRouteId)
         {
             if (!await _touristRouteRepository.TouristRouteExistsAsync(touristRouteId))
@@ -62,7 +62,7 @@ namespace JTrip.API.Controllers
             return Ok(touristRoutePictureDto);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreateTouristRoutePicture")]
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateTouristRoutePicture([FromRoute] Guid touristRouteId,
@@ -78,7 +78,7 @@ namespace JTrip.API.Controllers
             await _touristRouteRepository.SaveAsync();
             var pictureToReturn = _mapper.Map<TouristRoutePictureDto>(pictureModel);
             return CreatedAtRoute("GetPicture",
-                new {touristRouteId = pictureModel.TouristRouteId, pictureId = pictureModel.Id}, pictureToReturn);
+                new { touristRouteId = pictureModel.TouristRouteId, pictureId = pictureModel.Id }, pictureToReturn);
         }
 
         [HttpDelete("{pictureID}")]
