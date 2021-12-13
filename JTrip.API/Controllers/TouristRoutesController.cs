@@ -75,6 +75,22 @@ namespace JTrip.API.Controllers
             };
         }
 
+        private IEnumerable<LinkDto> CreateLinkForTouristRoute(Guid touristRouteId, string fields)
+        {
+            var links = new List<LinkDto>
+            {
+                new LinkDto(Url.Link("GetTouristRouteById", new { touristRouteId, fields }), "self", "GET"),
+                new LinkDto(Url.Link("UpdateTouristRoute", new { touristRouteId }), "update", "PUT"),
+                new LinkDto(Url.Link("PartiallyUpdateTouristRoute", new { touristRouteId }), "partially_update",
+                    "PATCH"),
+                new LinkDto(Url.Link("DeleteTouristRoute", new { touristRouteId }), "delete", "DELETE"),
+                new LinkDto(Url.Link("GetPictureListForTouristRoute", new { touristRouteId }), "get_pictures",
+                    "GET"),
+                new LinkDto(Url.Link("CreateTouristRoutePicture", new { touristRouteId }), "create_picture", "POST")
+            };
+            return links;
+        }
+
         [HttpGet(Name = "GetTouristRoutes")]
         [HttpHead]
         public async Task<IActionResult> GetTouristRoutes(
@@ -144,7 +160,11 @@ namespace JTrip.API.Controllers
             }
 
             var touristRouteDto = _mapper.Map<TouristRouteDto>(touristRouteFromRepo);
-            return Ok(touristRouteDto.ShapeData(touristRouteResourceParameters.Fields));
+            var linksDto = CreateLinkForTouristRoute(touristRouteId, touristRouteResourceParameters.Fields);
+            var result =
+                touristRouteDto.ShapeData(touristRouteResourceParameters.Fields) as IDictionary<string, object>;
+            result.Add("links", linksDto);
+            return Ok(result);
         }
 
         [HttpPost(Name = "CreateTouristRoute")]
