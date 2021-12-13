@@ -177,8 +177,11 @@ namespace JTrip.API.Controllers
             await _touristRouteRepository.AddTouristRouteAsync(touristRouteModel);
             await _touristRouteRepository.SaveAsync();
             var touristRouteToReturn = _mapper.Map<TouristRouteDto>(touristRouteModel);
-            return CreatedAtRoute("GetTouristRouteById", new { touristRouteId = touristRouteToReturn.Id },
-                touristRouteToReturn);
+            var linksDto = CreateLinkForTouristRoute(touristRouteModel.Id, null);
+            var result = touristRouteToReturn.ShapeData(null) as IDictionary<string, object>;
+            result.Add("links", linksDto);
+            return CreatedAtRoute("GetTouristRouteById", new { touristRouteId = result["Id"] },
+                result);
         }
 
         [HttpPut("{touristRouteId}", Name = "UpdateTouristRoute")]
